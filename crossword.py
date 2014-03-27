@@ -261,6 +261,9 @@ class generator:
                     
                     nb = random.randint(cmin, cmax)
                     
+                    if nb > 5:
+                        nb = 5
+                    
                     while not len(cwords) == nb:
                         w = random.choice(words)
                         

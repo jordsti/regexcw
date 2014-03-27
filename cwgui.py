@@ -6,6 +6,7 @@ Created on Mar 27, 2014
 
 from PyQt4 import QtGui, QtCore
 import sys
+import crossword
 
 class crossword_gui(QtGui.QMainWindow):
     
@@ -29,6 +30,37 @@ class crossword_gui(QtGui.QMainWindow):
         
     def new_game(self):
         print 'new game!'
+        generator = crossword.generator(8, 8)
+        generator.build_patterns()
+        self.cw = generator.get_crossword()
+        
+        for r in range(self.cw.dimension[1]):
+            
+            row = self.cases[r]
+            
+            for c in range(self.cw.dimension[0]):
+                
+                le = row[c]
+                le.setText('')
+        
+        i = 0
+        
+        for r in self.cw.h_patterns:
+            
+            label = self.h_patterns[i]
+            label.setText(str(i+1)+'. '+r)
+            
+            i = i + 1
+        
+        i = 0
+        
+        for c in self.cw.v_patterns:
+            
+            label = self.v_patterns[i]
+            label.setText(str(i+1)+'. '+c)
+            
+            
+            i = i + 1
         
     
     def init_cases(self, nb_cols, nb_rows):
@@ -52,13 +84,13 @@ class crossword_gui(QtGui.QMainWindow):
         for c in range(nb_cols):
             label = QtGui.QLabel()
             label.setText(str(c+1)+'. None')
-            
+            self.v_patterns.append(label)
             self.grid.addWidget(label, 8+c+1, 3, 1, 4)
         
         for r in range(nb_rows):
             label = QtGui.QLabel()
             label.setText(str(r+1)+'. None')
-            
+            self.h_patterns.append(label)
             self.grid.addWidget(label, 8+r+1, 0, 1, 4)
         
         
