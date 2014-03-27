@@ -161,8 +161,11 @@ class crossword_gui(QtGui.QMainWindow):
             m = re.match(h, word)
 
             if m == None:
-                print "Invalid H " + str(i+1)
+                self.h_patterns[i].setStyleSheet("QLabel { color: red; }")
+                #print "Invalid H " + str(i+1)
                 err = err + 1
+            else:
+                self.h_patterns[i].setStyleSheet("QLabel { color: green; }")
 
             
             i = i + 1
@@ -174,9 +177,11 @@ class crossword_gui(QtGui.QMainWindow):
             m = re.match(c, word)
 
             if m == None:
-                print "Invalid V " + str(i+1)
+                self.v_patterns[i].setStyleSheet("QLabel { color: red; }")
+                #print "Invalid V " + str(i+1)
                 err = err + 1
-            
+            else:
+                self.h_patterns[i].setStyleSheet("QLabel { color: green; }")
             i = i + 1
 
         if err == 0:
