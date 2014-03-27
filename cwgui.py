@@ -7,6 +7,7 @@ Created on Mar 27, 2014
 from PyQt4 import QtGui, QtCore
 import sys
 import crossword
+import re
 
 class crossword_gui(QtGui.QMainWindow):
     
@@ -73,7 +74,7 @@ class crossword_gui(QtGui.QMainWindow):
             for c in range(nb_cols):
                 
                 label = QtGui.QLineEdit()
-                
+                label.editingFinished.connect(self.validate)
                 label.setText('0')
                 label.setGeometry(0, 0, 20, 20)
                 row.append(label)
@@ -95,7 +96,13 @@ class crossword_gui(QtGui.QMainWindow):
         
         
     def init_ui(self):
-        
+
+        self.valid_format = QtGui.QTextFormat()
+        self.valid_format.setForeground(QtCore.Qt.green)
+
+        self.invalid_format = QtGui.QTextFormat()
+        self.invalid_format.setForeground(QtCore.Qt.red)
+                
         self.h_patterns = []
         self.v_patterns = []
         
@@ -123,7 +130,57 @@ class crossword_gui(QtGui.QMainWindow):
         self.setGeometry(100, 100, 400, 600)
         self.setWindowTitle("RegEx Crossword")
         self.show()
-        
+
+    def get_h_word(self, index):
+        word = ''
+
+        row = self.cases[index]
+
+        for case in row:
+            val = str(case.text())
+            word = word + val
+
+        return word
+
+    def get_v_word(self, index):
+        word = ''
+
+        for r in self.cases:
+            val = str(r[index].text())
+            word = word + val
+
+        return word
+            
+
+    def validate(self):
+        i = 0
+        err = 0
+        for h in self.cw.h_patterns:
+            word = self.get_h_word(i)
+
+            m = re.match(h, word)
+
+            if m == None:
+                print "Invalid H " + str(i+1)
+                err = err + 1
+
+            
+            i = i + 1
+
+        i = 0
+        for c in self.cw.v_patterns:
+            word = self.get_v_word(i)
+
+            m = re.match(c, word)
+
+            if m == None:
+                print "Invalid V " + str(i+1)
+                err = err + 1
+            
+            i = i + 1
+
+        if err == 0:
+            print "Solved!"
 
 def main():
     

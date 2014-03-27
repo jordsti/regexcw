@@ -319,14 +319,20 @@ class generator:
                 #2 []*
                 
                 oper = random.randint(0, 2)
+                sub_regex = ''
+                if cmin == cmax:
+                    sub_regex = '[' + chr(cmin) + ']'
+                else:
+                    sub_regex = '[' + chr(cmin) + '-' + chr(cmax) + ']'
 
                 if oper == 0:
-                    regex = regex + '[' + chr(cmin) + '-' + chr(cmax) + ']{'+str(len(sub))+'}'
+                    sub_regex = sub_regex +  '{'+str(len(sub))+'}'
                 elif oper == 1:
-                    regex = regex + '[' + chr(cmin) + '-' + chr(cmax) + ']+'
+                    sub_regex = sub_regex + '+'
                 elif oper == 2:
-                    regex = regex + '[' + chr(cmin) + '-' + chr(cmax) + ']*'
-        
+                    sub_regex = sub_regex + '*'
+
+                regex = regex + sub_regex
             
             current = current + rc_length
             wrange = len(word) - rc_length - 1
@@ -337,9 +343,7 @@ class generator:
                 
                 
         return regex
-        
                 
-
 
 if __name__ == '__main__':
     print "Crossword module test"
@@ -350,5 +354,17 @@ if __name__ == '__main__':
     
     gen.build_patterns()
 
+    print "Horizontal Pattern"
+    for h in gen.cw.h_patterns:
+        print "\t" + h
+
+    print "Vertical Pattern"
+    for v in gen.cw.v_patterns:
+        print "\t" + v
+
+    for i in range(ord('A'), ord('Z') + 1):
+    
+        print chr(i)
+    
     
     
