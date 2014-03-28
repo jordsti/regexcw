@@ -28,11 +28,46 @@ class crossword_gui(QtGui.QMainWindow):
         new_game = QtGui.QAction('New Game...', self)
         new_game.triggered.connect(self.new_game_dialog)
         
+        save_game = QtGui.QAction('Save game...', self)
+        save_game.triggered.connect(self.save_game)
+        
+        load_game = QtGui.QAction('Load game...', self)
+        load_game.triggered.connect(self.load_game)
+        
         close = QtGui.QAction('Quit', self)
         close.triggered.connect(self.close)
         
         file_menu.addAction(new_game)
+        file_menu.addAction(save_game)
+        file_menu.addAction(load_game)
         file_menu.addAction(close)
+    
+    def load_game(self):
+        print "Load"
+    
+        fname = QtGui.QFileDialog.getOpenFileNames(self, "Choose your game save")
+    
+        cw = crossword.load_state(fname)
+        
+        self.cw = cw
+    
+    def save_game(self):
+        
+        dest = QtGui.QFileDialog.getSaveFileName(self, "Save your game")
+        
+        ir = 0;
+        for r in self.cases:
+            ic = 0
+            for c in r:
+                self.cw.rows[ir][ic].value = str(c.text())
+                
+                ic = ic + 1
+            ir = ir + 1
+            
+        self.cw.save_state(dest)
+    
+    def restore_game(self, cw):
+        print "assign" #todo
         
     def new_game_dialog(self):
         

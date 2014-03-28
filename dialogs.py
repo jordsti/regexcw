@@ -17,11 +17,25 @@ class solved_dialog(QtGui.QDialog):
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         
+        self.lbl_grats = QtGui.QLabel("The crossword was solved !")
+        
+        self.btn_save = QtGui.QPushButton("Save your board")
+        self.btn_save.clicked.connect(self.save_result)
+        
+        self.btn_close = QtGui.QPushButton("Close")
+        self.btn_close.clicked.connect(self.close)
+        
+        grid.addWidget(self.lbl_grats, 0, 0)
+        grid.addWidget(self.btn_save, 1, 0)
+        grid.addWidget(self.btn_close, 1, 1)
         
         self.setLayout(grid)
         self.setGeometry(100, 100, 300, 150)
         self.setWindowTitle("Grats !")
         self.show()
+        
+    def save_result(self):
+        print "save"
 
 class newgame_dialog(QtGui.QDialog):
     

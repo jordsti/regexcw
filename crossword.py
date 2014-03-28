@@ -3,10 +3,9 @@ Created on Mar 27, 2014
 
 @author: Jordan Guerin
 '''
-import sys
 import os
 import random
-import re
+import pickle
 
 class wordbank:
     
@@ -53,7 +52,7 @@ class wordbank:
         w1i = random.randint(0, len(w1) - 1)
         word1 = w1[w1i]
 
-        if len(w2) == 0:
+        if len(w2) == 0 and not w2_lg == 0:
             word2 = self.generate_combine_word(w2_lg)
         else:
             w2i = random.randint(0, len(w2) - 1)
@@ -102,6 +101,13 @@ class case:
         else:
             return self.value
 
+def load_state(filepath):
+    fp = open(filepath, 'r')
+    cw = pickle.load(fp)
+    
+    fp.close()
+    return cw
+
 class crossword:
     def __init__(self, cols_nb = 8, rows_nb = 8):
         
@@ -117,6 +123,13 @@ class crossword:
             self.rows.append(col)
             for c in range(cols_nb):
                 col.append(case())
+                
+    def save_state(self, filepath):
+        fp = open(filepath, 'w')
+        
+        pickle.dump(self, fp)
+        
+        fp.close()
     
     def get_vertical_word(self, index):
         
