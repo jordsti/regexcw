@@ -8,20 +8,25 @@ from PyQt4 import QtGui, QtCore
 import sys
 import crossword
 import re
+import dialogs
 
 class crossword_gui(QtGui.QMainWindow):
     
     def __init__(self):
         super(crossword_gui, self).__init__()
-        
+        self.rows = 8
+        self.cols = 8
+        self.cw = None
+        self.lbl_hpattern = None
+        self.lbl_vpattern = None
         self.init_ui()
         
     def init_menu(self):
         
         file_menu = self.menuBar().addMenu('&File')
         
-        new_game = QtGui.QAction('New Game', self)
-        new_game.triggered.connect(self.new_game)
+        new_game = QtGui.QAction('New Game...', self)
+        new_game.triggered.connect(self.new_game_dialog)
         
         close = QtGui.QAction('Quit', self)
         close.triggered.connect(self.close)
@@ -29,9 +34,16 @@ class crossword_gui(QtGui.QMainWindow):
         file_menu.addAction(new_game)
         file_menu.addAction(close)
         
+    def new_game_dialog(self):
+        
+        dialog = dialogs.newgame_dialog(self)
+        
     def new_game(self):
         print 'new game!'
-        generator = crossword.generator(8, 8)
+        
+        self.init_cases(self.cols, self.rows)
+        
+        generator = crossword.generator(self.cols, self.rows)
         generator.build_patterns()
         self.cw = generator.get_crossword()
         
@@ -62,9 +74,32 @@ class crossword_gui(QtGui.QMainWindow):
             
             
             i = i + 1
+    
+    
+    def clear_cases(self):
         
+        for r in self.cases:
+            for c in r:
+                c.deleteLater()
+            
+        self.cases = []
+        
+        if not self.lbl_hpattern == None:
+            self.lbl_hpattern.deleteLater()
+        if not self.lbl_vpattern == None:
+            self.lbl_vpattern.deleteLater()
+        
+        for h in self.h_patterns:
+            h.deleteLater()
+        for v in self.v_patterns:
+            v.deleteLater()
+        
+        self.h_patterns = []
+        self.v_patterns = []
     
     def init_cases(self, nb_cols, nb_rows):
+        
+        self.clear_cases()
         
         for r in range(nb_rows):
             
@@ -81,18 +116,25 @@ class crossword_gui(QtGui.QMainWindow):
                 
                 self.grid.addWidget(label, r, c)
                 
+                
+                
+        self.lbl_hpattern = QtGui.QLabel('Horizontal')
+        self.grid.addWidget(self.lbl_hpattern, self.rows, 0, 1, self.cols / 2)
+        
+        self.lbl_vpattern = QtGui.QLabel('Vertical')
+        self.grid.addWidget(self.lbl_vpattern, self.rows, (self.cols / 2) - 1, 1, self.cols / 2)
         
         for c in range(nb_cols):
             label = QtGui.QLabel()
             label.setText(str(c+1)+'. None')
             self.v_patterns.append(label)
-            self.grid.addWidget(label, 8+c+1, 3, 1, 4)
+            self.grid.addWidget(label, self.rows+c+1, (self.cols / 2) - 1, 1, self.cols / 2)
         
         for r in range(nb_rows):
             label = QtGui.QLabel()
             label.setText(str(r+1)+'. None')
             self.h_patterns.append(label)
-            self.grid.addWidget(label, 8+r+1, 0, 1, 4)
+            self.grid.addWidget(label, self.rows+r+1, 0, 1, self.cols / 2)
         
         
     def init_ui(self):
@@ -116,13 +158,7 @@ class crossword_gui(QtGui.QMainWindow):
         
         self.cases = []
         
-        self.init_cases(8,8)
-        
-        lbl_hpattern = QtGui.QLabel('Horizontal')
-        self.grid.addWidget(lbl_hpattern, 8, 0, 1, 4)
-        
-        lbl_vpattern = QtGui.QLabel('Vertical')
-        self.grid.addWidget(lbl_vpattern, 8, 3, 1, 4)
+        self.init_cases(self.cols, self.rows)
         
         self.main_widget.setLayout(self.grid)
         
@@ -155,6 +191,10 @@ class crossword_gui(QtGui.QMainWindow):
     def validate(self):
         i = 0
         err = 0
+        
+        if self.cw == None:
+            return
+        
         for h in self.cw.h_patterns:
             word = self.get_h_word(i)
 

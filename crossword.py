@@ -51,10 +51,13 @@ class wordbank:
         w2 = self.words_by_length(w2_lg)
         random.seed()
         w1i = random.randint(0, len(w1) - 1)
-        w2i = random.randint(0, len(w2) - 1)
-        
         word1 = w1[w1i]
-        word2 = w2[w2i]
+
+        if len(w2) == 0:
+            word2 = self.generate_combine_word(w2_lg)
+        else:
+            w2i = random.randint(0, len(w2) - 1)
+            word2 = w2[w2i]
         
         return word1 + word2
     
@@ -162,13 +165,14 @@ class crossword:
 class generator:
     def __init__(self, rows = 8, cols = 8):
         
-        self.cw = crossword(rows, cols)
+        self.cw = crossword(cols, rows)
         self.word_length = cols
         
         self.wb = wordbank()
         
         for i in range(self.word_length):
             word = self.wb.generate_word(self.word_length)
+            #print word
             self.cw.fill_word_row(word, i)
         
     
